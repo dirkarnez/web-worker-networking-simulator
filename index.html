@@ -1,1 +1,78 @@
-<div></div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <button id="btn-execute">Execute</button>
+    <script>
+        // const PromisifyWorker = (messageToPost) => {
+        //     return new Promise((res, rej) => {
+        //         const worker = new Worker("./worker.js");
+        //         const onMessage = (e) => {
+        //             res(e.data);
+        //             worker.removeEventListener(onMessage);
+        //             worker.terminate();
+        //         }
+        //         worker.addEventListener("message", onMessage);
+        //         worker.postMessage(numbers.slice(mid));
+        //     });
+        // }
+
+        const btnExecute = document.getElementById("btn-execute");
+        btnExecute.addEventListener("click", function() {
+            let log = Array.from({length: 10}).map((_, i) => ({timestamp: i}));
+            
+            const addToTimestamp = ({name, timestamp, message}) => {
+                debugger;
+                log = log.map(item => {
+                    if (item.timestamp == timestamp) {
+                        return ({
+                            ...item,
+                            workers: (item.workers || [{
+                                name: name
+                            }])
+                            .map(worker => {
+                                if (worker.name == name) {
+                                    return ({
+                                        ...worker,
+                                        message: message
+                                    })
+                                } else {
+                                    return worker;
+                                }
+                            })
+                        });
+                    } else {
+                        return item;
+                    }
+                })
+                
+                console.log(`${JSON.stringify(log)}`);
+            }
+
+            const workers = Array.from({length: 10})
+            .map((_, i) => {
+                const worker = new Worker("./worker.js", { name: `worker_${i}` });
+                worker.addEventListener("message", (e) => addToTimestamp(e.data));
+                return worker;
+            });
+
+            log.forEach((e) => {
+                ((timestamp) => {
+                    workers.forEach(worker => {
+                        worker.postMessage(timestamp);
+                    });
+                })(e.timestamp);
+            });
+
+
+
+            // Promise.all(
+            //     log.map()
+            // )
+        });
+    </script>
+</body>
+</html>
