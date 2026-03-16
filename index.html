@@ -6,6 +6,7 @@
 </head>
 <body>
     <button id="btn-execute">Execute</button>
+    <div id="container"></div>
     <script>
         // const PromisifyWorker = (messageToPost) => {
         //     return new Promise((res, rej) => {
@@ -18,9 +19,13 @@
         //         worker.addEventListener("message", onMessage);
         //         worker.postMessage(numbers.slice(mid));
         //     });
-        // }
-
+        // 
+        const container = document.getElementById("container");
         const btnExecute = document.getElementById("btn-execute");
+        const log = (str) => {
+            container.innerHTML = "";
+            container.innerText = str;
+        }
         btnExecute.addEventListener("click", function() {
             let log = Array.from({length: 10}).map((_, i) => ({timestamp: i}));
             
@@ -47,7 +52,7 @@
                     }
                 })
                 
-                console.log(`${JSON.stringify(log)}`);
+                log(`${JSON.stringify(log)}`);
             }
 
             const workers = Array.from({length: 10})
