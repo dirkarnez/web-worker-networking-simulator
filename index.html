@@ -28,21 +28,19 @@
                 debugger;
                 log = log.map(item => {
                     if (item.timestamp == timestamp) {
+                        const exists = (item.workers || []).findIndex(worker => worker.name == name) > -1;
                         return ({
                             ...item,
-                            workers: (item.workers || [{
-                                name: name
-                            }])
-                            .map(worker => {
+                            workers: exists ? item.workers.map(worker => {
                                 if (worker.name == name) {
                                     return ({
                                         ...worker,
                                         message: message
                                     })
                                 } else {
-                                    return worker;
+                                    worker;
                                 }
-                            })
+                            }) : [...(item.workers || []), { name: name }]
                         });
                     } else {
                         return item;
@@ -60,18 +58,10 @@
             });
 
             log.forEach((e) => {
-                ((timestamp) => {
-                    workers.forEach(worker => {
-                        worker.postMessage(timestamp);
-                    });
-                })(e.timestamp);
+                workers.forEach(worker => {
+                    worker.postMessage(e.timestamp);
+                });
             });
-
-
-
-            // Promise.all(
-            //     log.map()
-            // )
         });
     </script>
 </body>
