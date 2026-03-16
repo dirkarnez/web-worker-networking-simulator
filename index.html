@@ -27,11 +27,11 @@
             container.innerText = str;
         }
         btnExecute.addEventListener("click", function() {
-            let log = Array.from({length: 10}).map((_, i) => ({timestamp: i}));
+            let logs = Array.from({length: 10}).map((_, i) => ({timestamp: i}));
             
             const addToTimestamp = ({name, timestamp, message}) => {
                 debugger;
-                log = log.map(item => {
+                logs = logs.map(item => {
                     if (item.timestamp == timestamp) {
                         const exists = (item.workers || []).findIndex(worker => worker.name == name) > -1;
                         return ({
@@ -52,7 +52,7 @@
                     }
                 })
                 
-                log(`${JSON.stringify(log)}`);
+                log(`${JSON.stringify(logs)}`);
             }
 
             const workers = Array.from({length: 10})
@@ -62,7 +62,7 @@
                 return worker;
             });
 
-            log.forEach((e) => {
+            logs.forEach((e) => {
                 workers.forEach(worker => {
                     worker.postMessage(e.timestamp);
                 });
